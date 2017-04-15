@@ -7,7 +7,7 @@ class Navigation extends React.Component {
             <Navbar>
                 <Navbar.Header>
                     <Navbar.Brand>
-                        <a href="/">GSS</a>
+                        <a href="/">Mail Delivery</a>
                     </Navbar.Brand>
                 </Navbar.Header>
             </Navbar>

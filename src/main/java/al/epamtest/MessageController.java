@@ -2,26 +2,24 @@ package al.epamtest;
 
 import al.epamtest.al.epamtest.model.TheMessage;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
+import javax.annotation.PostConstruct;
 
 
 @RestController
 public class MessageController {
 
-    Queue<Long> messageQ = new LinkedList<Long>();
+    @Autowired
+    private MessageQueue messageQueue;
 
-    Map<Long, TheMessage> messageMap = new HashMap<>();
-
-  //  int first = myQ.poll();// retrieve and remove the first element
-
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @RequestMapping(value = "/message", method = RequestMethod.POST, consumes = "application/json; charset=UTF-8")
     public TheMessage addMessageToQueue(@RequestBody MessageReq c) {
@@ -30,10 +28,22 @@ public class MessageController {
         theMessage.setToList(c.getToList());
         theMessage.setBody(c.getBody());
 
-        messageQ.add(theMessage.getId());
-        messageMap.put(theMessage.getId(), theMessage);
-
+        messageQueue.getMessageQ().add(theMessage.getId());
+        messageQueue.getMessageMap().put(theMessage.getId(), theMessage);
+        eventPublisher.publishEvent(new MessageGotEvent(theMessage.getId()));
         return theMessage;
+    }
+
+    @PostConstruct
+    private void createMessage() {
+        TheMessage theMessage = new TheMessage();
+        theMessage.setFrom("aaa@gmail.com");
+        theMessage.setToList("andriy.lantukh@gmail.com");
+        theMessage.setBody("!!!!! test message");
+
+        messageQueue.getMessageQ().add(theMessage.getId());
+        messageQueue.getMessageMap().put(theMessage.getId(), theMessage);
+        System.out.println("created");
     }
 
 }
