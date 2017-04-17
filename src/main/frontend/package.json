@@ -6,7 +6,6 @@
     "react-scripts": "0.7.0"
   },
   "dependencies": {
-    "griddle-react": "^0.7.1",
     "jquery": "^3.1.1",
     "moment": "^2.17.0",
     "react": "^15.4.1",
