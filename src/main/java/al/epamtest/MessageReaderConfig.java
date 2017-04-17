@@ -1,26 +1,16 @@
 package al.epamtest;
 
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.Session;
-import javax.mail.Store;
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.Properties;
 
-/**
- * Created by Андрей on 15.04.2017.
- */
 @Configuration
 @PropertySource("classpath:mail.properties")
-public class MailConfig {
+public class MessageReaderConfig {
 
     @Value("${mail.protocol}")
     private String protocol;
@@ -48,8 +38,8 @@ public class MailConfig {
     private String password;
 
     @Bean
-    public JavaMailSender javaMailSender() {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+    public MessageReader messageReader() {
+        MessageReader messageReader = new MessageReader();
 
         Properties mailProperties = new Properties();
         mailProperties.put("mail.smtp.auth", auth);
@@ -60,13 +50,15 @@ public class MailConfig {
         mailProperties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         mailProperties.put("mail.smtp.socketFactory.fallback", fallback);
 
-        mailSender.setJavaMailProperties(mailProperties);
-        mailSender.setHost(host);
-        mailSender.setPort(port);
-        mailSender.setProtocol(protocol);
-        mailSender.setUsername(username);
-        mailSender.setPassword(password);
-        return mailSender;
+        messageReader.mailProperties = mailProperties;
+
+        messageReader.host = host;
+        messageReader.username = username;
+        messageReader.password = password;
+
+        return messageReader;
     }
+
 }
+
 
